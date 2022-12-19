@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import './TicTacToe.css'
+
 export default function TicTacToe() {
     const [board, setBoard] = useState([
         ["", "", ""],
@@ -70,49 +71,54 @@ export default function TicTacToe() {
         const randomIndex = Math.floor(Math.random() * emptyIndexes.length);
         return emptyIndexes[randomIndex];
     }
-    
+
     function checkWinner() {
         for (let index = 0; index < board.length; index++) {
-            const row = board[index];
-            if (row.every((cell) => cell === players?.CPU?.SYM)) {
+            if (board[index][0] === board[index][1] && board[index][0] === board[index][2] && board[index][0] != "") {
+                if (board[index][0] === players?.CPU?.SYM) {
+                    setWinner(players?.CPU?.NAME);
+                    return;
+                }
+                else {
+                    setWinner(players?.HUMAN?.NAME);
+                    return;
+                }
+            }
+            else {
+                if (board[0][index] === board[1][index] && board[0][index] === board[2][index] && board[0][index] != "") {
+                    if (board[0][index] === players?.CPU?.SYM) {
+                        setWinner(players?.CPU?.NAME);
+                        return;
+                    }
+                    else {
+                        setWinner(players?.HUMAN?.NAME);
+                        return;
+                    }
+                }
+            }
+        }
+
+        if (board[0][0] === board[1][1] && board[0][0] === board[2][2] && board[1][1] != "" ||
+            board[0][2] === board[1][1] && board[0][2] === board[2][0] && board[1][1] != "") {
+            if (board[1][1] === players?.CPU?.SYM) {
                 setWinner(players?.CPU?.NAME);
                 return;
-            } else if (row.every((cell) => cell === players?.HUMAN?.SYM)) {
+            }
+            else {
                 setWinner(players?.HUMAN?.NAME);
                 return;
             }
         }
-        for (let i = 0; i < 3; i++) {
-            const column = board.map((row) => row[i]);
-            if (column.every((cell) => cell === players?.CPU?.SYM)) {
-                setWinner(players?.CPU?.NAME);
+        else {
+            if (board.flat().every((cell) => cell !== "")) {
+                setWinner("draw");
                 return;
-            } else if (column.every((cell) => cell === players?.HUMAN?.SYM)) {
-                setWinner(players?.HUMAN?.NAME);
-                return;
+            } else {
+                setWinner(null);
+                return
             }
         }
-        const diagonal1 = [board[0][0], board[1][1], board[2][2]];
-        const diagonal2 = [board[0][2], board[1][1], board[2][0]];
-        if (diagonal1.every((cell) => cell === players?.CPU?.SYM)) {
-            setWinner(players?.CPU?.NAME);
-            return;
-        } else if (diagonal1.every((cell) => cell === players?.HUMAN?.SYM)) {
-            setWinner(players?.HUMAN?.NAME);
-            return;
-        } else if (diagonal2.every((cell) => cell === players?.CPU?.SYM)) {
-            setWinner(players?.CPU?.NAME);
-            return;
-        } else if (diagonal2.every((cell) => cell === players?.HUMAN?.SYM)) {
-            setWinner(players?.HUMAN?.NAME);
-            return;
-        } else if (board.flat().every((cell) => cell !== "")) {
-            setWinner("draw");
-            return;
-        } else {
-            setWinner(null);
-            return;
-        }
+
     }
 
     function displayWinner() {
@@ -131,6 +137,7 @@ export default function TicTacToe() {
         ]);
         setWinner(null);
         setIsCPUNext(false);
+        setIsCPUTurn(false)
     }
 
     return (
@@ -146,7 +153,7 @@ export default function TicTacToe() {
                         )}
                     </div>
                 )}
-            
+
             </div>
             <div>
                 {winner && <h2>{displayWinner()}</h2>}
